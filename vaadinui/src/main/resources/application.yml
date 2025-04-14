@@ -1,0 +1,30 @@
+server:
+  port: 8076
+
+spring:
+  application:
+    name: vaadin-ui
+
+# Eureka ?????????
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8774/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: ${HOSTNAME:localhost}
+
+# API Gateway ?????????
+api:
+  gateway:
+    url: ${API_GATEWAY_URL:http://localhost:9074}
+
+# Logging
+logging:
+  level:
+    main.vaadinui: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    com.vaadin: INFO

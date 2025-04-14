@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    build: .
+    container_name: eureka-server
+    ports:
+      - "8774:8774"
+    networks:
+      - movies-network
+
+networks:
+  movies-network:
+    name: movies-network
+    external: true

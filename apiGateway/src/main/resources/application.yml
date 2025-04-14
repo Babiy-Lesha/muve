@@ -1,0 +1,78 @@
+server:
+  port: 9074
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # ???????? ??? User Service
+        - id: user-service-all
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**, /api/auth/**
+
+        # ???????? ??? Movie Service
+        - id: movie-service-all
+          uri: lb://movie-service
+          predicates:
+            - Path=/api/movies/**, /api/movie-proposals/**
+
+        # User Service API Docs
+        - id: user-service-api-docs
+          uri: lb://user-service
+          predicates:
+            - Path=/user-service/v3/api-docs/**
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        # Movie Service API Docs
+        - id: movie-service-api-docs
+          uri: lb://movie-service
+          predicates:
+            - Path=/movie-service/v3/api-docs/**
+          filters:
+            - RewritePath=/movie-service/(?<segment>.*), /$\{segment}
+
+# Eureka ?????????
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8774/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+    enabled: true
+  instance:
+    prefer-ip-address: true
+    hostname: ${HOSTNAME:localhost}
+
+# SpringDoc ????????? ??? ????????????? Swagger UI
+springdoc:
+  api-docs:
+    enabled: true
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: user-service
+        url: /user-service/v3/api-docs
+      - name: movie-service
+        url: /movie-service/v3/api-docs
+    urls-primary-name: user-service  # ????? ?????? ?????????? ?? ?????????
+
+# Endpoints ??? management
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway,health,info
+  endpoint:
+    gateway:
+      enabled: true

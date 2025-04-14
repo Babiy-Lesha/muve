@@ -1,0 +1,83 @@
+server:
+  port: 8074
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5474}/${DB_NAME:movies_platform_db}
+    username: ${DB_USERNAME:db1}
+    password: ${DB_PASSWORD:db1}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: rating:main.userservice.dto.MovieRatingDto
+    consumer:
+      group-id: user-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: main.userservice.dto
+
+# Eureka настройки
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8774/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+    enabled: true
+    should-enforce-registration-at-init: false
+  instance:
+    prefer-ip-address: true
+    hostname: ${HOSTNAME:localhost}
+
+# OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    filter: true
+  packages-to-scan: main.userservice.controller
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:23546235472364786237467sdgfhgsdf123456789}
+  expiration: 86400000  # 24 hours
+
+# API Gateway Configuration
+api:
+  gateway:
+    name: api-gateway
+    port: 9074
+
+logging:
+  level:
+    com.movies.userservice: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.hibernate: INFO

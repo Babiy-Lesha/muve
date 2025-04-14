@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: .
+    container_name: api-gateway
+    ports:
+      - "9074:9074"
+    environment:
+      - EUREKA_URI=http://eureka-server:8774/eureka/
+    networks:
+      - movies-network
+
+networks:
+  movies-network:
+    name: movies-network
+    external: true

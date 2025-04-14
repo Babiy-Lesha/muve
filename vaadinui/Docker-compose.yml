@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  vaadin-ui:
+    build: ./vaadinUI
+    container_name: vaadin-ui
+    ports:
+      - "8076:8076"
+    depends_on:
+      - api-gateway
+      - eureka-server
+    environment:
+      - EUREKA_URI=http://eureka-server:8774/eureka/
+      - API_GATEWAY_URL=http://api-gateway:9074
+    networks:
+      - movies-network
+    restart: on-failure
