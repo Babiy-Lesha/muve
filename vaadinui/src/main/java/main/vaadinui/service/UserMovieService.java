@@ -24,7 +24,6 @@ public class UserMovieService {
 
     public List<UserMovieDto> getUserMovies(Long userId) {
         try {
-            userId = 1L;
             List<UserMovieDto> userMovies = restClient.get()
                     .uri("/api/users/{userId}/movies", userId)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
@@ -72,8 +71,6 @@ public class UserMovieService {
     }
 
     public UserMovieDto rateMovie(Long userId, Long movieId, Integer rating) {
-        userId = 1L;
-
         try {
             return restClient.post()
                     .uri("/api/users/{userId}/movies/{movieId}/rate?rating={rating}", userId, movieId, rating)

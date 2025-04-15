@@ -35,8 +35,6 @@ public class AuthService {
                 throw ApiException.unauthorized();
             }
             throw ApiException.serverError("Ошибка при аутентификации: " + e.getMessage());
-        } catch (Exception e) {
-            throw ApiException.serverError("Неожиданная ошибка при аутентификации: " + e.getMessage());
         }
     }
 
@@ -53,8 +51,6 @@ public class AuthService {
                 throw ApiException.badRequest("Ошибка регистрации: " + e.getMessage());
             }
             throw ApiException.serverError("Ошибка при регистрации: " + e.getMessage());
-        } catch (Exception e) {
-            throw ApiException.serverError("Неожиданная ошибка при регистрации: " + e.getMessage());
         }
     }
 }

@@ -17,7 +17,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserService {
 
     private final RestClient restClient;
@@ -32,13 +31,11 @@ public class UserService {
                     .body(new ParameterizedTypeReference<List<UserDto>>() {
                     });
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при получении пользователей", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             }
             return Collections.emptyList();
         } catch (Exception e) {
-            log.error("Неожиданная ошибка при получении пользователей", e);
             return Collections.emptyList();
         }
     }
@@ -51,7 +48,6 @@ public class UserService {
                     .retrieve()
                     .body(UserDto.class);
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при получении пользователя", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -59,7 +55,6 @@ public class UserService {
             }
             throw ApiException.serverError("Ошибка при получении пользователя: " + e.getMessage());
         } catch (Exception e) {
-            log.error("Неожиданная ошибка при получении пользователя", e);
             throw ApiException.serverError("Неожиданная ошибка при получении пользователя: " + e.getMessage());
         }
     }
@@ -72,7 +67,6 @@ public class UserService {
                     .retrieve()
                     .toBodilessEntity();
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при удалении пользователя", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -80,7 +74,6 @@ public class UserService {
             }
             throw ApiException.serverError("Ошибка при удалении пользователя: " + e.getMessage());
         } catch (Exception e) {
-            log.error("Неожиданная ошибка при удалении пользователя", e);
             throw ApiException.serverError("Неожиданная ошибка при удалении пользователя: " + e.getMessage());
         }
     }

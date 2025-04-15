@@ -74,9 +74,7 @@ public class MovieFormDialog extends Dialog {
         description.setMinHeight("150px");
 
         List<String> genres = Arrays.asList(
-                "Боевик", "Комедия", "Драма", "Фантастика", "Ужасы",
-                "Триллер", "Приключения", "Мультфильм", "Документальный", "Криминал"
-        );
+                "Боевик", "Комедия", "Драма", "Фантастика");
         genre.setItems(genres);
         genre.setRequired(true);
         genre.setWidthFull();
