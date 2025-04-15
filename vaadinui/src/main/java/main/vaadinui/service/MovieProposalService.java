@@ -26,29 +26,24 @@ public class MovieProposalService {
 
     public List<MovieProposalDto> getAllProposals() {
         try {
-            String token = securityService.getCurrentUser().getToken();
-            token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzQ0NzM5ODgyLCJleHAiOjE3NDQ4MjYyODJ9.tB2hN669Tid2AvHTZQCDbxboq-ZpLbEOmBMsGyX7r9o";
-
             return restClient.get()
                     .uri("/api/proposals")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
                     .retrieve()
-                    .body(new ParameterizedTypeReference<List<MovieProposalDto>>() {});
+                    .body(new ParameterizedTypeReference<List<MovieProposalDto>>() {
+                    });
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при получении предложений фильмов", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             }
             throw ApiException.serverError("Ошибка при получении предложений фильмов: " + e.getMessage());
         } catch (Exception e) {
-            log.error("Неожиданная ошибка при получении предложений фильмов", e);
             return Collections.emptyList();
         }
     }
 
     public MovieProposalDto createProposal(MovieProposalDto proposalDto) {
         try {
-            // Устанавливаем ID текущего пользователя
             proposalDto.setUserId(securityService.getCurrentUserId());
 
             return restClient.post()
@@ -59,11 +54,7 @@ public class MovieProposalService {
                     .retrieve()
                     .body(MovieProposalDto.class);
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при создании предложения фильма", e);
             throw ApiException.serverError("Ошибка при создании предложения фильма: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при создании предложения фильма", e);
-            throw ApiException.serverError("Неожиданная ошибка при создании предложения фильма: " + e.getMessage());
         }
     }
 
@@ -75,11 +66,7 @@ public class MovieProposalService {
                     .retrieve()
                     .body(MovieProposalDto.class);
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при одобрении предложения фильма", e);
             throw ApiException.serverError("Ошибка при одобрении предложения фильма: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при одобрении предложения фильма", e);
-            throw ApiException.serverError("Неожиданная ошибка при одобрении предложения фильма: " + e.getMessage());
         }
     }
 
@@ -91,11 +78,7 @@ public class MovieProposalService {
                     .retrieve()
                     .body(MovieProposalDto.class);
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при отклонении предложения фильма", e);
             throw ApiException.serverError("Ошибка при отклонении предложения фильма: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при отклонении предложения фильма", e);
-            throw ApiException.serverError("Неожиданная ошибка при отклонении предложения фильма: " + e.getMessage());
         }
     }
 }

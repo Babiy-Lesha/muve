@@ -1,15 +1,12 @@
 package main.vaadinui.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import main.vaadinui.dto.MovieRatingDto;
 import main.vaadinui.dto.UserMovieDto;
 import main.vaadinui.exception.ApiException;
 import main.vaadinui.security.SecurityService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
@@ -19,7 +16,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserMovieService {
 
     private final RestClient restClient;
@@ -33,18 +29,17 @@ public class UserMovieService {
                     .uri("/api/users/{userId}/movies", userId)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
                     .retrieve()
-                    .body(new ParameterizedTypeReference<List<UserMovieDto>>() {});
+                    .body(new ParameterizedTypeReference<List<UserMovieDto>>() {
+                    });
 
             // Обогатим данные информацией о фильмах
             return enrichUserMoviesWithMovieInfo(userMovies);
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при получении фильмов пользователя", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             }
             return Collections.emptyList();
         } catch (Exception e) {
-            log.error("Неожиданная ошибка при получении фильмов пользователя", e);
             return Collections.emptyList();
         }
     }
@@ -58,7 +53,6 @@ public class UserMovieService {
                 userMovie.setMovieTitle(movie.getTitle());
                 userMovie.setMovieGenre(movie.getGenre());
             } catch (Exception e) {
-                log.warn("Не удалось получить информацию о фильме с id: {}", userMovie.getMovieId());
                 userMovie.setMovieTitle("Неизвестный фильм");
             }
         }
@@ -67,40 +61,14 @@ public class UserMovieService {
     }
 
     public UserMovieDto addMovieToCollection(Long userId, Long movieId, String note) {
-        try {
-            log.info("Добавление фильма {} в коллекцию пользователя {}", movieId, userId);
+        String token = securityService.getCurrentUser().getToken();
+        UserMovieDto result = restClient.post()
+                .uri("/api/users/{userId}/movies/{movieId}", userId, movieId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .retrieve()
+                .body(UserMovieDto.class);
 
-            // Проверка параметров
-            if (userId == null) {
-                log.error("ID пользователя равен null");
-                throw new IllegalArgumentException("ID пользователя не может быть null");
-            }
-
-            if (movieId == null) {
-                log.error("ID фильма равен null");
-                throw new IllegalArgumentException("ID фильма не может быть null");
-            }
-
-            if (securityService.getCurrentUser() == null || securityService.getCurrentUser().getToken() == null) {
-                log.error("Текущий пользователь или токен равен null");
-                throw new IllegalStateException("Пользователь не аутентифицирован");
-            }
-
-            String token = securityService.getCurrentUser().getToken();
-            log.info("Отправка запроса с токеном: {}", token);
-
-            UserMovieDto result = restClient.post()
-                    .uri("/api/users/{userId}/movies/{movieId}", userId, movieId)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                    .retrieve()
-                    .body(UserMovieDto.class);
-
-            log.info("Фильм успешно добавлен в коллекцию");
-            return result;
-        } catch (Exception e) {
-            log.error("Ошибка при добавлении фильма в коллекцию", e);
-            throw ApiException.serverError("Ошибка при добавлении фильма в коллекцию: " + e.getMessage());
-        }
+        return result;
     }
 
     public UserMovieDto rateMovie(Long userId, Long movieId, Integer rating) {
@@ -113,7 +81,6 @@ public class UserMovieService {
                     .retrieve()
                     .body(UserMovieDto.class);
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при оценке фильма", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -122,9 +89,6 @@ public class UserMovieService {
                 throw ApiException.badRequest("Некорректная оценка");
             }
             throw ApiException.serverError("Ошибка при оценке фильма: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при оценке фильма", e);
-            throw ApiException.serverError("Неожиданная ошибка при оценке фильма: " + e.getMessage());
         }
     }
 
@@ -136,16 +100,12 @@ public class UserMovieService {
                     .retrieve()
                     .toBodilessEntity();
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при удалении фильма из коллекции", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw ApiException.notFound("Фильм не найден в коллекции");
             }
             throw ApiException.serverError("Ошибка при удалении фильма из коллекции: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при удалении фильма из коллекции", e);
-            throw ApiException.serverError("Неожиданная ошибка при удалении фильма из коллекции: " + e.getMessage());
         }
     }
 }

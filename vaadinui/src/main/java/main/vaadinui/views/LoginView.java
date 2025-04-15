@@ -42,10 +42,8 @@ public class LoginView extends VerticalLayout {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
-        // Заголовок
         H1 title = new H1("Платформа фильмов");
 
-        // Поля формы
         username = new TextField("Имя пользователя");
         username.setRequired(true);
         username.setWidth("300px");
@@ -54,7 +52,6 @@ public class LoginView extends VerticalLayout {
         password.setRequired(true);
         password.setWidth("300px");
 
-        // Кнопки
         Button loginButton = new Button("Войти", e -> login());
         loginButton.setWidth("300px");
 
@@ -62,7 +59,6 @@ public class LoginView extends VerticalLayout {
                 UI.getCurrent().navigate(RegisterView.class));
         registerButton.setWidth("300px");
 
-        // Добавляем компоненты на форму
         add(title, username, password, loginButton, registerButton);
     }
 
@@ -74,34 +70,18 @@ public class LoginView extends VerticalLayout {
         }
 
         try {
-            log.info("Попытка входа для пользователя: {}", username.getValue());
             AuthResponse response = authService.login(username.getValue(), password.getValue());
-            log.info("Вход успешен, токен получен");
-
             securityService.setCurrentUser(response);
-            log.info("Пользователь установлен в SecurityService");
 
-            // Сохраняем в localStorage
             UI.getCurrent().getPage().executeJs(
                     "localStorage.setItem('auth_token', $0);" +
                             "localStorage.setItem('username', $1);" +
                             "localStorage.setItem('user_role', $2);",
                     response.getToken(), response.getUsername(), response.getRole());
-            log.info("Данные аутентификации сохранены в localStorage");
 
-            // Получаем реальный ID пользователя
-            try {
-                UserDto userDto = userService.getUserByUsername(response.getUsername());
-                if (userDto != null) {
-                    securityService.setUserId(userDto.getId());
-                    log.info("Установлен реальный ID пользователя: {}", userDto.getId());
-                }
-            } catch (Exception e) {
-                log.warn("Не удалось получить реальный ID пользователя", e);
-            }
-
-            log.info("Переход к MoviesView");
+            securityService.setUserId(response.getId());
             UI.getCurrent().getPage().executeJs("window.location.href = 'movies';");
+
         } catch (ApiException e) {
             log.error("Ошибка API при входе: {}", e.getMessage());
             if (e.getStatusCode() == 401) {
@@ -111,10 +91,6 @@ public class LoginView extends VerticalLayout {
                 Notification.show("Ошибка при входе: " + e.getMessage())
                         .addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при входе", e);
-            Notification.show("Произошла ошибка при входе")
-                    .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
     }
 }

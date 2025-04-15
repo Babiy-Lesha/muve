@@ -29,7 +29,8 @@ public class UserService {
                     .uri("/api/users")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
                     .retrieve()
-                    .body(new ParameterizedTypeReference<List<UserDto>>() {});
+                    .body(new ParameterizedTypeReference<List<UserDto>>() {
+                    });
         } catch (HttpClientErrorException e) {
             log.error("Ошибка при получении пользователей", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
@@ -85,15 +86,10 @@ public class UserService {
     }
 
     public UserDto getUserByUsername(String username) {
-        try {
-            return restClient.get()
-                    .uri("/api/users/by-username/{username}")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
-                    .retrieve()
-                    .body(UserDto.class);
-        } catch (Exception e) {
-            log.error("Ошибка при получении пользователя по имени", e);
-            return null; // Возвращаем null вместо исключения для мягкой обработки ошибки
-        }
+        return restClient.get()
+                .uri("/api/users/by-username/{username}")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
+                .retrieve()
+                .body(UserDto.class);
     }
 }

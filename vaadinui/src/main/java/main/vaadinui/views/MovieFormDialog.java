@@ -13,7 +13,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
-import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.MovieCreateDto;
 import main.vaadinui.dto.MovieDto;
 import main.vaadinui.exception.ApiException;
@@ -22,7 +21,6 @@ import main.vaadinui.service.MovieService;
 import java.util.Arrays;
 import java.util.List;
 
-@Slf4j
 public class MovieFormDialog extends Dialog {
 
     private final MovieService movieService;
@@ -128,7 +126,6 @@ public class MovieFormDialog extends Dialog {
             Notification.show("Ошибка при сохранении фильма: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         } catch (Exception e) {
-            log.error("Ошибка при сохранении фильма", e);
             Notification.show("Произошла ошибка при сохранении фильма")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }

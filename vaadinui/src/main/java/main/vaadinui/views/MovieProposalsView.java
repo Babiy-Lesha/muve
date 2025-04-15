@@ -13,7 +13,6 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.MovieProposalDto;
 import main.vaadinui.exception.ApiException;
 import main.vaadinui.security.SecurityService;
@@ -23,7 +22,6 @@ import java.util.List;
 
 @Route(value = "proposals", layout = MainLayout.class)
 @PageTitle("Предложения фильмов | Платформа фильмов")
-@Slf4j
 @AnonymousAllowed
 public class MovieProposalsView extends VerticalLayout {
 
@@ -97,7 +95,6 @@ public class MovieProposalsView extends VerticalLayout {
             List<MovieProposalDto> proposals = movieProposalService.getAllProposals();
             grid.setItems(proposals);
         } catch (Exception e) {
-            log.error("Ошибка при получении списка предложений", e);
             Notification.show("Не удалось загрузить список предложений: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
@@ -126,7 +123,6 @@ public class MovieProposalsView extends VerticalLayout {
                 Notification.show("Ошибка при одобрении предложения: " + ex.getMessage())
                         .addThemeVariants(NotificationVariant.LUMO_ERROR);
             } catch (Exception ex) {
-                log.error("Ошибка при одобрении предложения", ex);
                 Notification.show("Произошла ошибка при одобрении предложения")
                         .addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
@@ -165,7 +161,6 @@ public class MovieProposalsView extends VerticalLayout {
                 Notification.show("Ошибка при отклонении предложения: " + ex.getMessage())
                         .addThemeVariants(NotificationVariant.LUMO_ERROR);
             } catch (Exception ex) {
-                log.error("Ошибка при отклонении предложения", ex);
                 Notification.show("Произошла ошибка при отклонении предложения")
                         .addThemeVariants(NotificationVariant.LUMO_ERROR);
             }

@@ -2,7 +2,6 @@ package main.vaadinui.views;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -14,7 +13,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.UserCreateDto;
 import main.vaadinui.dto.UserDto;
 import main.vaadinui.exception.ApiException;
@@ -23,7 +21,6 @@ import main.vaadinui.service.AuthService;
 @Route("register")
 @PageTitle("Регистрация | Платформа фильмов")
 @AnonymousAllowed
-@Slf4j
 public class RegisterView extends VerticalLayout {
 
     private final TextField username;
@@ -113,7 +110,6 @@ public class RegisterView extends VerticalLayout {
             Notification.show("Ошибка при регистрации: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         } catch (Exception e) {
-            log.error("Ошибка при регистрации", e);
             Notification.show("Произошла ошибка при регистрации")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }

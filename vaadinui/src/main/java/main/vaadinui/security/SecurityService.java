@@ -1,6 +1,5 @@
 package main.vaadinui.security;
 
-import com.vaadin.flow.component.UI;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,19 +17,17 @@ import java.util.List;
 @Slf4j
 public class SecurityService {
 
-    private static final String LOGOUT_SUCCESS_URL = "/";
-
     @Getter
     private AuthResponse currentUser;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long userId;
 
     public void setCurrentUser(AuthResponse user) {
         this.currentUser = user;
 
         if (user != null) {
-            // Устанавливаем аутентификацию в Spring Security
             List<GrantedAuthority> authorities = Collections.singletonList(
                     new SimpleGrantedAuthority("ROLE_" + user.getRole())
             );
@@ -39,15 +36,10 @@ public class SecurityService {
                     user.getUsername(), null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-            log.info("Установлена аутентификация для пользователя: {}", user.getUsername());
-
-            // Устанавливаем временный ID пользователя
-            this.userId = (long)user.getUsername().hashCode();
-            log.info("Установлен временный ID пользователя: {}", this.userId);
+            this.userId = user.getId();
         } else {
             SecurityContextHolder.clearContext();
             this.userId = null;
-            log.info("Аутентификация очищена");
         }
     }
 
@@ -57,21 +49,5 @@ public class SecurityService {
 
     public Long getCurrentUserId() {
         return userId;
-    }
-
-    public void logout() {
-        UI ui = UI.getCurrent();
-        SecurityContextHolder.clearContext();
-        setCurrentUser(null);
-
-        // Очищаем localStorage
-        if (ui != null) {
-            ui.getPage().executeJs(
-                    "localStorage.removeItem('auth_token');" +
-                            "localStorage.removeItem('username');" +
-                            "localStorage.removeItem('user_role');"
-            );
-            ui.getPage().setLocation(LOGOUT_SUCCESS_URL);
-        }
     }
 }

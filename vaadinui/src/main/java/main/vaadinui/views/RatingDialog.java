@@ -11,16 +11,13 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.shared.Registration;
-import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.exception.ApiException;
 import main.vaadinui.service.UserMovieService;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@Slf4j
 public class RatingDialog extends Dialog {
 
     private final UserMovieService userMovieService;
@@ -87,7 +84,6 @@ public class RatingDialog extends Dialog {
             Notification.show("Ошибка при сохранении оценки: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         } catch (Exception e) {
-            log.error("Ошибка при сохранении оценки", e);
             Notification.show("Произошла ошибка при сохранении оценки")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }

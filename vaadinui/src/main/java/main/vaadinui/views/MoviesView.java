@@ -11,9 +11,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.MovieDto;
 import main.vaadinui.dto.UserMovieDto;
 import main.vaadinui.exception.ApiException;
@@ -25,7 +23,6 @@ import java.util.List;
 
 @Route(value = "movies", layout = MainLayout.class)
 @PageTitle("Фильмы | Платформа фильмов")
-@Slf4j
 @AnonymousAllowed
 public class MoviesView extends VerticalLayout {
 
@@ -109,7 +106,6 @@ public class MoviesView extends VerticalLayout {
             List<MovieDto> movies = movieService.getAllMovies();
             grid.setItems(movies);
         } catch (Exception e) {
-            log.error("Ошибка при получении списка фильмов", e);
             Notification.show("Не удалось загрузить список фильмов: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
@@ -128,7 +124,6 @@ public class MoviesView extends VerticalLayout {
 
             grid.setItems(movies);
         } catch (Exception e) {
-            log.error("Ошибка при поиске фильмов", e);
             Notification.show("Не удалось выполнить поиск: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
@@ -149,7 +144,6 @@ public class MoviesView extends VerticalLayout {
             Notification.show("Ошибка при удалении фильма: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         } catch (Exception e) {
-            log.error("Ошибка при удалении фильма", e);
             Notification.show("Произошла ошибка при удалении фильма")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
@@ -165,7 +159,6 @@ public class MoviesView extends VerticalLayout {
             Notification.show("Ошибка при добавлении фильма в коллекцию: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         } catch (Exception e) {
-            log.error("Ошибка при добавлении фильма в коллекцию", e);
             Notification.show("Произошла ошибка при добавлении фильма в коллекцию")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }

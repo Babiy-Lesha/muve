@@ -13,7 +13,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
-import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.MovieProposalDto;
 import main.vaadinui.exception.ApiException;
 import main.vaadinui.service.MovieProposalService;
@@ -21,7 +20,6 @@ import main.vaadinui.service.MovieProposalService;
 import java.util.Arrays;
 import java.util.List;
 
-@Slf4j
 public class MovieProposalFormDialog extends Dialog {
 
     private final MovieProposalService movieProposalService;
@@ -99,7 +97,6 @@ public class MovieProposalFormDialog extends Dialog {
             Notification.show("Ошибка при отправке предложения: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         } catch (Exception e) {
-            log.error("Ошибка при отправке предложения", e);
             Notification.show("Произошла ошибка при отправке предложения")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }

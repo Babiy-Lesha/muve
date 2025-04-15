@@ -10,7 +10,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.UserDto;
 import main.vaadinui.exception.ApiException;
 import main.vaadinui.security.SecurityService;
@@ -21,7 +20,6 @@ import java.util.List;
 
 @Route(value = "users", layout = MainLayout.class)
 @PageTitle("Пользователи | Платформа фильмов")
-@Slf4j
 @AnonymousAllowed
 public class UsersView extends VerticalLayout {
 
@@ -84,7 +82,6 @@ public class UsersView extends VerticalLayout {
             List<UserDto> users = userService.getAllUsers();
             grid.setItems(users);
         } catch (Exception e) {
-            log.error("Ошибка при получении списка пользователей", e);
             Notification.show("Не удалось загрузить список пользователей: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
@@ -99,7 +96,6 @@ public class UsersView extends VerticalLayout {
             Notification.show("Ошибка при удалении пользователя: " + e.getMessage())
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         } catch (Exception e) {
-            log.error("Ошибка при удалении пользователя", e);
             Notification.show("Произошла ошибка при удалении пользователя")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }

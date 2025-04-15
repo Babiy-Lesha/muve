@@ -8,7 +8,6 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@Slf4j
 public class RestClientConfig {
 
     @Value("${api.gateway.url}")

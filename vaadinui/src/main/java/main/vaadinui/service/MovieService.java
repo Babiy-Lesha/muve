@@ -1,7 +1,6 @@
 package main.vaadinui.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.MovieCreateDto;
 import main.vaadinui.dto.MovieDto;
 import main.vaadinui.exception.ApiException;
@@ -19,7 +18,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class MovieService {
 
     private final RestClient restClient;
@@ -31,12 +29,11 @@ public class MovieService {
                     .uri("/api/movies")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
                     .retrieve()
-                    .body(new ParameterizedTypeReference<List<MovieDto>>() {});
+                    .body(new ParameterizedTypeReference<List<MovieDto>>() {
+                    });
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при получении фильмов", e);
             return Collections.emptyList();
         } catch (Exception e) {
-            log.error("Неожиданная ошибка при получении фильмов", e);
             return Collections.emptyList();
         }
     }
@@ -47,12 +44,11 @@ public class MovieService {
                     .uri("/api/movies/search?keyword={keyword}", keyword)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
                     .retrieve()
-                    .body(new ParameterizedTypeReference<List<MovieDto>>() {});
+                    .body(new ParameterizedTypeReference<List<MovieDto>>() {
+                    });
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при поиске фильмов", e);
             return Collections.emptyList();
         } catch (Exception e) {
-            log.error("Неожиданная ошибка при поиске фильмов", e);
             return Collections.emptyList();
         }
     }
@@ -68,11 +64,7 @@ public class MovieService {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw ApiException.notFound("Фильм не найден");
             }
-            log.error("Ошибка при получении фильма", e);
             throw ApiException.serverError("Ошибка при получении фильма: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при получении фильма", e);
-            throw ApiException.serverError("Неожиданная ошибка при получении фильма: " + e.getMessage());
         }
     }
 
@@ -86,16 +78,12 @@ public class MovieService {
                     .retrieve()
                     .body(MovieDto.class);
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при создании фильма", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             } else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
                 throw ApiException.badRequest("Ошибка при создании фильма: " + e.getMessage());
             }
             throw ApiException.serverError("Ошибка при создании фильма: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при создании фильма", e);
-            throw ApiException.serverError("Неожиданная ошибка при создании фильма: " + e.getMessage());
         }
     }
 
@@ -109,14 +97,10 @@ public class MovieService {
                     .retrieve()
                     .body(MovieDto.class);
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при обновлении фильма", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             }
             throw ApiException.serverError("Ошибка при обновлении фильма: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при обновлении фильма", e);
-            throw ApiException.serverError("Неожиданная ошибка при обновлении фильма: " + e.getMessage());
         }
     }
 
@@ -128,14 +112,10 @@ public class MovieService {
                     .retrieve()
                     .toBodilessEntity();
         } catch (HttpClientErrorException e) {
-            log.error("Ошибка при удалении фильма", e);
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
                 throw ApiException.forbidden();
             }
             throw ApiException.serverError("Ошибка при удалении фильма: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при удалении фильма", e);
-            throw ApiException.serverError("Неожиданная ошибка при удалении фильма: " + e.getMessage());
         }
     }
 }

@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Данные авторизации")
 public class AuthResponse {
 
+    @Schema(description = "id")
+    private Long id;
+
     @Schema(description = "JWT токен")
     private String token;
 

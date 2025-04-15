@@ -41,6 +41,7 @@ public class CustomAuthService {
 
         // 5. Создаем и возвращаем ответ
         return AuthResponse.builder()
+                .id(user.getId())
                 .token(token)
                 .tokenType("Bearer")
                 .username(user.getUsername())
