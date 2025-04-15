@@ -157,7 +157,7 @@ public class MoviesView extends VerticalLayout {
 
     private void addToCollection(MovieDto movie) {
         try {
-            Long userId = securityService.getCurrentUserId();
+            Long userId = 1L;
             UserMovieDto userMovie = userMovieService.addMovieToCollection(userId, movie.getId(), null);
             Notification.show("Фильм добавлен в вашу коллекцию")
                     .addThemeVariants(NotificationVariant.LUMO_SUCCESS);

@@ -21,7 +21,7 @@ spring:
         - id: movie-service-all
           uri: lb://movie-service
           predicates:
-            - Path=/api/movies/**, /api/movie-proposals/**
+            - Path=/api/movies/**, /api/proposals/**
 
         # User Service API Docs
         - id: user-service-api-docs

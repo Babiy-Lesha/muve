@@ -9,6 +9,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.UserDto;
 import main.vaadinui.exception.ApiException;
@@ -21,6 +22,7 @@ import java.util.List;
 @Route(value = "users", layout = MainLayout.class)
 @PageTitle("Пользователи | Платформа фильмов")
 @Slf4j
+@AnonymousAllowed
 public class UsersView extends VerticalLayout {
 
     private final Grid<UserDto> grid = new Grid<>(UserDto.class, false);

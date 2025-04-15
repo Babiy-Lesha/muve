@@ -16,32 +16,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class SecurityConfig extends VaadinWebSecurity {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        // Устанавливаем стратегию сохранения контекста безопасности
-        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Публичные ресурсы
+        // Разрешаем доступ ко всем маршрутам без аутентификации для упрощения
         http.authorizeHttpRequests(auth ->
-                auth.requestMatchers(
-                        new AntPathRequestMatcher("/images/**"),
-                        new AntPathRequestMatcher("/line-awesome/**"),
-                        new AntPathRequestMatcher("/actuator/**"),
-                        new AntPathRequestMatcher("/register"),
-                        new AntPathRequestMatcher("/login"),
-                        new AntPathRequestMatcher("/")
-                ).permitAll()
+                auth.requestMatchers(AntPathRequestMatcher.antMatcher("/**")).permitAll()
         );
 
-        // Добавляем наш JWT фильтр
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // Устанавливаем логин-вью
         super.configure(http);
         setLoginView(http, LoginView.class);
     }

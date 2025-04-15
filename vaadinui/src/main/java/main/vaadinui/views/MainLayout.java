@@ -12,7 +12,6 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.security.SecurityService;
 
-@Slf4j
 public class MainLayout extends AppLayout {
 
     private final SecurityService securityService;
@@ -20,60 +19,31 @@ public class MainLayout extends AppLayout {
     public MainLayout(SecurityService securityService) {
         this.securityService = securityService;
         createHeader();
-        log.info("MainLayout создан с пользователем: {}",
-                securityService.getCurrentUser() != null ? securityService.getCurrentUser().getUsername() : "null");
     }
 
     private void createHeader() {
         H2 logo = new H2("Платформа фильмов");
-        logo.addClassNames(
-                LumoUtility.FontSize.LARGE,
-                LumoUtility.Margin.MEDIUM);
+        logo.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.MEDIUM);
 
-        Header header;
+        Button moviesButton = new Button("Все фильмы", e -> getUI().ifPresent(ui -> ui.navigate("movies")));
+        Button myMoviesButton = new Button("Мои фильмы", e -> getUI().ifPresent(ui -> ui.navigate("my-movies")));
+        Button proposalsButton = new Button("Предложенные фильмы", e -> getUI().ifPresent(ui -> ui.navigate("proposals")));
+        Button usersButton = new Button("Пользователи", e -> getUI().ifPresent(ui -> ui.navigate("users")));
+        Button logoutButton = new Button("Выйти", e -> {
+            securityService.setCurrentUser(null);
+            getUI().ifPresent(ui -> ui.navigate("login"));
+        });
 
-        if (securityService.getCurrentUser() != null) {
-            log.info("Создание навигации для пользователя: {}", securityService.getCurrentUser().getUsername());
+        HorizontalLayout navButtons = new HorizontalLayout(moviesButton, myMoviesButton, proposalsButton, usersButton, logoutButton);
+        navButtons.setWidthFull();
+        navButtons.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
+        navButtons.setAlignItems(FlexComponent.Alignment.CENTER);
 
-            // Навигационные кнопки
-            Button moviesButton = new Button("Все фильмы", e ->
-                    getUI().ifPresent(ui -> ui.navigate(MoviesView.class)));
+        HorizontalLayout headerContent = new HorizontalLayout(logo, navButtons);
+        headerContent.setWidthFull();
+        headerContent.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+        headerContent.setAlignItems(FlexComponent.Alignment.CENTER);
 
-            Button myMoviesButton = new Button("Мои фильмы", e ->
-                    getUI().ifPresent(ui -> ui.navigate(MyMoviesView.class)));
-
-            // Контейнер для кнопок навигации
-            HorizontalLayout navButtons = new HorizontalLayout(moviesButton, myMoviesButton);
-
-            if (securityService.isAdmin()) {
-                log.info("Добавление кнопок администратора");
-
-                Button proposalsButton = new Button("Предложенные фильмы", e ->
-                        getUI().ifPresent(ui -> ui.navigate(MovieProposalsView.class)));
-
-                Button usersButton = new Button("Пользователи", e ->
-                        getUI().ifPresent(ui -> ui.navigate(UsersView.class)));
-
-                navButtons.add(proposalsButton, usersButton);
-            }
-
-            // Кнопка выхода
-            Button logoutButton = new Button("Выйти", e -> {
-                securityService.logout();
-            });
-
-            // Создаем горизонтальный макет с логотипом, кнопками навигации и кнопкой выхода
-            HorizontalLayout headerContent = new HorizontalLayout(logo, navButtons, logoutButton);
-            headerContent.setWidthFull();
-            headerContent.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-            headerContent.setAlignItems(FlexComponent.Alignment.CENTER);
-
-            header = new Header(headerContent);
-        } else {
-            log.warn("Пользователь не авторизован, шапка без навигации");
-            header = new Header(logo);
-        }
-
-        addToNavbar(header);
+        addToNavbar(headerContent);
     }
 }

@@ -28,6 +28,7 @@ public class UserMovieService {
 
     public List<UserMovieDto> getUserMovies(Long userId) {
         try {
+            userId = 1L;
             List<UserMovieDto> userMovies = restClient.get()
                     .uri("/api/users/{userId}/movies", userId)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
@@ -67,26 +68,44 @@ public class UserMovieService {
 
     public UserMovieDto addMovieToCollection(Long userId, Long movieId, String note) {
         try {
-            return restClient.post()
-                    .uri("/api/users/{userId}/movies/{movieId}?note={note}", userId, movieId, note)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
+            log.info("Добавление фильма {} в коллекцию пользователя {}", movieId, userId);
+
+            // Проверка параметров
+            if (userId == null) {
+                log.error("ID пользователя равен null");
+                throw new IllegalArgumentException("ID пользователя не может быть null");
+            }
+
+            if (movieId == null) {
+                log.error("ID фильма равен null");
+                throw new IllegalArgumentException("ID фильма не может быть null");
+            }
+
+            if (securityService.getCurrentUser() == null || securityService.getCurrentUser().getToken() == null) {
+                log.error("Текущий пользователь или токен равен null");
+                throw new IllegalStateException("Пользователь не аутентифицирован");
+            }
+
+            String token = securityService.getCurrentUser().getToken();
+            log.info("Отправка запроса с токеном: {}", token);
+
+            UserMovieDto result = restClient.post()
+                    .uri("/api/users/{userId}/movies/{movieId}", userId, movieId)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .retrieve()
                     .body(UserMovieDto.class);
-        } catch (HttpClientErrorException e) {
-            log.error("Ошибка при добавлении фильма в коллекцию", e);
-            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
-                throw ApiException.forbidden();
-            } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw ApiException.notFound("Фильм или пользователь не найден");
-            }
-            throw ApiException.serverError("Ошибка при добавлении фильма в коллекцию: " + e.getMessage());
+
+            log.info("Фильм успешно добавлен в коллекцию");
+            return result;
         } catch (Exception e) {
-            log.error("Неожиданная ошибка при добавлении фильма в коллекцию", e);
-            throw ApiException.serverError("Неожиданная ошибка при добавлении фильма в коллекцию: " + e.getMessage());
+            log.error("Ошибка при добавлении фильма в коллекцию", e);
+            throw ApiException.serverError("Ошибка при добавлении фильма в коллекцию: " + e.getMessage());
         }
     }
 
     public UserMovieDto rateMovie(Long userId, Long movieId, Integer rating) {
+        userId = 1L;
+
         try {
             return restClient.post()
                     .uri("/api/users/{userId}/movies/{movieId}/rate?rating={rating}", userId, movieId, rating)

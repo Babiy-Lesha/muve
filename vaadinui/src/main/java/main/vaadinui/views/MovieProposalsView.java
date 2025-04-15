@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.MovieProposalDto;
 import main.vaadinui.exception.ApiException;
@@ -23,6 +24,7 @@ import java.util.List;
 @Route(value = "proposals", layout = MainLayout.class)
 @PageTitle("Предложения фильмов | Платформа фильмов")
 @Slf4j
+@AnonymousAllowed
 public class MovieProposalsView extends VerticalLayout {
 
     private final Grid<MovieProposalDto> grid = new Grid<>(MovieProposalDto.class, false);

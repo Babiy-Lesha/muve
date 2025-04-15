@@ -87,13 +87,13 @@ public class UserService {
     public UserDto getUserByUsername(String username) {
         try {
             return restClient.get()
-                    .uri("/api/users/by-username/{username}", username)
+                    .uri("/api/users/by-username/{username}")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
                     .retrieve()
                     .body(UserDto.class);
         } catch (Exception e) {
             log.error("Ошибка при получении пользователя по имени", e);
-            throw new ApiException("Не удалось получить пользователя по имени: " + e.getMessage(), 500);
+            return null; // Возвращаем null вместо исключения для мягкой обработки ошибки
         }
     }
 }

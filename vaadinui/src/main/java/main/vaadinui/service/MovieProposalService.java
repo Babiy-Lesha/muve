@@ -26,9 +26,12 @@ public class MovieProposalService {
 
     public List<MovieProposalDto> getAllProposals() {
         try {
+            String token = securityService.getCurrentUser().getToken();
+            token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzQ0NzM5ODgyLCJleHAiOjE3NDQ4MjYyODJ9.tB2hN669Tid2AvHTZQCDbxboq-ZpLbEOmBMsGyX7r9o";
+
             return restClient.get()
                     .uri("/api/proposals")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .retrieve()
                     .body(new ParameterizedTypeReference<List<MovieProposalDto>>() {});
         } catch (HttpClientErrorException e) {

@@ -86,6 +86,7 @@ public class MovieProposalFormDialog extends Dialog {
             proposal.setTitle(title.getValue());
             proposal.setDescription(description.getValue());
             proposal.setGenre(genre.getValue());
+            proposal.setUserId(1L);
 
             movieProposalService.createProposal(proposal);
 
