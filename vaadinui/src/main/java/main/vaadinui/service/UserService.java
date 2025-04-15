@@ -83,4 +83,17 @@ public class UserService {
             throw ApiException.serverError("Неожиданная ошибка при удалении пользователя: " + e.getMessage());
         }
     }
+
+    public UserDto getUserByUsername(String username) {
+        try {
+            return restClient.get()
+                    .uri("/api/users/by-username/{username}", username)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + securityService.getCurrentUser().getToken())
+                    .retrieve()
+                    .body(UserDto.class);
+        } catch (Exception e) {
+            log.error("Ошибка при получении пользователя по имени", e);
+            throw new ApiException("Не удалось получить пользователя по имени: " + e.getMessage(), 500);
+        }
+    }
 }

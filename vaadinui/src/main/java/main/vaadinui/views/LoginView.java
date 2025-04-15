@@ -70,9 +70,16 @@ public class LoginView extends VerticalLayout {
         }
 
         try {
+            log.info("Попытка входа для пользователя: {}", username.getValue());
             AuthResponse response = authService.login(username.getValue(), password.getValue());
+
+            log.info("Успешный вход, устанавливаем пользователя в SecurityService");
             securityService.setCurrentUser(response);
-            UI.getCurrent().navigate(MoviesView.class);
+
+            log.info("Переход к MoviesView");
+
+            // Используем JavaScript для перехода и перезагрузки страницы
+            UI.getCurrent().getPage().executeJs("window.location.href = 'movies';");
         } catch (ApiException e) {
             if (e.getStatusCode() == 401) {
                 Notification.show("Неверное имя пользователя или пароль")

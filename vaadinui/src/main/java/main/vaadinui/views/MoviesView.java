@@ -12,6 +12,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.dto.MovieDto;
 import main.vaadinui.dto.UserMovieDto;
@@ -25,6 +26,7 @@ import java.util.List;
 @Route(value = "movies", layout = MainLayout.class)
 @PageTitle("Фильмы | Платформа фильмов")
 @Slf4j
+@AnonymousAllowed
 public class MoviesView extends VerticalLayout {
 
     private final Grid<MovieDto> grid = new Grid<>(MovieDto.class, false);

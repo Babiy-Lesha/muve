@@ -7,8 +7,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import lombok.extern.slf4j.Slf4j;
 import main.vaadinui.security.SecurityService;
@@ -21,6 +20,8 @@ public class MainLayout extends AppLayout {
     public MainLayout(SecurityService securityService) {
         this.securityService = securityService;
         createHeader();
+        log.info("MainLayout создан с пользователем: {}",
+                securityService.getCurrentUser() != null ? securityService.getCurrentUser().getUsername() : "null");
     }
 
     private void createHeader() {
@@ -29,9 +30,11 @@ public class MainLayout extends AppLayout {
                 LumoUtility.FontSize.LARGE,
                 LumoUtility.Margin.MEDIUM);
 
-        var header = new Header(logo);
+        Header header;
 
         if (securityService.getCurrentUser() != null) {
+            log.info("Создание навигации для пользователя: {}", securityService.getCurrentUser().getUsername());
+
             // Навигационные кнопки
             Button moviesButton = new Button("Все фильмы", e ->
                     getUI().ifPresent(ui -> ui.navigate(MoviesView.class)));
@@ -39,10 +42,12 @@ public class MainLayout extends AppLayout {
             Button myMoviesButton = new Button("Мои фильмы", e ->
                     getUI().ifPresent(ui -> ui.navigate(MyMoviesView.class)));
 
-            // Кнопки для админа
+            // Контейнер для кнопок навигации
             HorizontalLayout navButtons = new HorizontalLayout(moviesButton, myMoviesButton);
 
             if (securityService.isAdmin()) {
+                log.info("Добавление кнопок администратора");
+
                 Button proposalsButton = new Button("Предложенные фильмы", e ->
                         getUI().ifPresent(ui -> ui.navigate(MovieProposalsView.class)));
 
@@ -54,16 +59,19 @@ public class MainLayout extends AppLayout {
 
             // Кнопка выхода
             Button logoutButton = new Button("Выйти", e -> {
-                securityService.setCurrentUser(null);
-                getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+                securityService.logout();
             });
 
+            // Создаем горизонтальный макет с логотипом, кнопками навигации и кнопкой выхода
             HorizontalLayout headerContent = new HorizontalLayout(logo, navButtons, logoutButton);
             headerContent.setWidthFull();
             headerContent.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
             headerContent.setAlignItems(FlexComponent.Alignment.CENTER);
 
             header = new Header(headerContent);
+        } else {
+            log.warn("Пользователь не авторизован, шапка без навигации");
+            header = new Header(logo);
         }
 
         addToNavbar(header);
