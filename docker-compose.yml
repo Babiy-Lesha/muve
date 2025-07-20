@@ -38,13 +38,20 @@ services:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
     ports:
-      - "9092:9092"
+      - "9060:9060"    # и хост, и контейнер слушают 9060
+      - "29060:29060"  # и хост, и контейнер слушают 29060
     depends_on:
       - zookeeper
     environment:
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9060,EXTERNAL://0.0.0.0:29060
+      KAFKA_ADVERTISED_LISTENERS: >
+        PLAINTEXT://kafka:9060,
+        EXTERNAL://localhost:29060
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -90,7 +97,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/movies_platform_db
       - SPRING_DATASOURCE_USERNAME=db1
       - SPRING_DATASOURCE_PASSWORD=db1
-      - KAFKA_SERVERS=kafka:9092
+      - KAFKA_SERVERS=kafka:9060
       - EUREKA_URI=http://eureka-server:8774/eureka/
       - API_GATEWAY_NAME=api-gateway
       - API_GATEWAY_PORT=9074
@@ -113,7 +120,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/movies_platform_db
       - SPRING_DATASOURCE_USERNAME=db1
       - SPRING_DATASOURCE_PASSWORD=db1
-      - KAFKA_SERVERS=kafka:9092
+      - KAFKA_SERVERS=kafka:9060
       - EUREKA_URI=http://eureka-server:8774/eureka/
       - API_GATEWAY_NAME=api-gateway
       - API_GATEWAY_PORT=9074

@@ -39,7 +39,7 @@ spring:
           filters:
             - RewritePath=/movie-service/(?<segment>.*), /$\{segment}
 
-# Eureka ?????????
+# Eureka
 eureka:
   client:
     service-url:
@@ -65,9 +65,9 @@ springdoc:
         url: /user-service/v3/api-docs
       - name: movie-service
         url: /movie-service/v3/api-docs
-    urls-primary-name: user-service  # ????? ?????? ?????????? ?? ?????????
+    urls-primary-name: user-service
 
-# Endpoints ??? management
+# Endpoints management
 management:
   endpoints:
     web:
